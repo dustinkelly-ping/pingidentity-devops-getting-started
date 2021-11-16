@@ -1,0 +1,3395 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="canonical" href="https://devops.pingidentity.com/deployment/deployVault/">
+      
+      <link rel="icon" href="../../images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
+    
+    
+      
+        <title>Deploy Hashicorp Vault - Ping Identity DevOps</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a57b2b03.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../mkdocs/overrides/stylesheets/extra.css">
+    
+    
+      
+  
+
+
+
+  
+  
+
+
+
+  <script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-156953351-1","auto"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){var e;this.value&&(e=document.location.pathname,ga("send","pageview",e+"?q="+this.value))}),"undefined"!=typeof location$&&location$.subscribe(function(e){ga("send","pageview",e.pathname)})})</script>
+  <script async src="https://www.google-analytics.com/analytics.js"></script>
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="blue">
+  
+    
+    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+      <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#deploying-hashicorp-vault" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Ping Identity DevOps" class="md-header__button md-logo" aria-label="Ping Identity DevOps" data-md-component="logo">
+      <!-- Logo -->
+  
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Ping Identity DevOps
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Deploy Hashicorp Vault
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/pingidentity/pingidentity-devops-getting-started" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pingidentity/pingidentity-devops-getting-started
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        DevOps @ Ping
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../get-started/getStarted/" class="md-tabs__link">
+        Get Started
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../deploy/" class="md-tabs__link md-tabs__link--active">
+        Deployment
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../how-to/existingLicense/" class="md-tabs__link">
+        How To
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../reference/config/" class="md-tabs__link">
+        Reference
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../release-notes/relnotes-2110/" class="md-tabs__link">
+        Release Notes
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Ping Identity DevOps" class="md-nav__button md-logo" aria-label="Ping Identity DevOps" data-md-component="logo">
+      <!-- Logo -->
+  
+    </a>
+    Ping Identity DevOps
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/pingidentity/pingidentity-devops-getting-started" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pingidentity/pingidentity-devops-getting-started
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          DevOps @ Ping
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="DevOps @ Ping" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          DevOps @ Ping
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../license/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../supportPolicy/" class="md-nav__link">
+        Support Policy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../disclaimer/" class="md-nav__link">
+        Disclaimer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3rdPartySoftware/" class="md-nav__link">
+        Third-Party Software
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        Contributing
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Get Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Get Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Get Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-started/getStarted/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-started/pingDevopsUtil/" class="md-nav__link">
+        ping-devops Utility
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-started/devopsRegistration/" class="md-nav__link">
+        DevOps Registration
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-started/devopsUserKey/" class="md-nav__link">
+        Using Your DevOps User and Key
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-started/prodLicense/" class="md-nav__link">
+        DevOps Product Licenses
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-started/getStartedWithGitRepo/" class="md-nav__link">
+        Deploy Example Stack
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-started/k8sHelmBasics/" class="md-nav__link">
+        Kubernetes and Helm Basics
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Deployment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deployment" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Deployment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Deploy with Docker-Compose
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deploy with Docker-Compose" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Deploy with Docker-Compose
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployCompose/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploySimpleStack/" class="md-nav__link">
+        Deploy PingFederate and PingDirectory Stack
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployReplication/" class="md-nav__link">
+        Deploy Replicated PingDirectory Pair
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploySync/" class="md-nav__link">
+        Deploy PingDirectory and PingDataSync
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploySyncFailover/" class="md-nav__link">
+        Deploy PingDataSync Failover Server
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployPingDataConsoleSSO/" class="md-nav__link">
+        Deploy PingDataConsole with PingOne SSO
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployPingCentral/" class="md-nav__link">
+        Deploy PingCentral
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployPfCluster/" class="md-nav__link">
+        Deploy PingFederate Cluster
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployPaCluster/" class="md-nav__link">
+        Deploy PingAccess Cluster
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployPazPap/" class="md-nav__link">
+        Deploy PingAuthorize with the Policy Editor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployMonitoringStack/" class="md-nav__link">
+        Deploy Monitoring Stack
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploySiemStack/" class="md-nav__link">
+        Deploy an Elasticsearch SIEM Stack
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          Deploy with Kubernetes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deploy with Kubernetes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Deploy with Kubernetes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8s/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployLocalK8sCluster/" class="md-nav__link">
+        Deploy Local Kubernetes Cluster
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployHelm/" class="md-nav__link">
+        Deploy with Ping Identity Helm Charts
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8sPD-clusters/" class="md-nav__link">
+        PingDirectory Deployments Across Kubernetes Clusters
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3_5" type="checkbox" id="__nav_3_3_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3_5">
+          Kubernetes Deployments For General Use
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Kubernetes Deployments For General Use" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          Kubernetes Deployments For General Use
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8sGeneral/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8sStandalone/" class="md-nav__link">
+        Orchestrate Standalone Deployments
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8sFullstack/" class="md-nav__link">
+        Orchestrate a Full Stack Deployment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8sReplicated/" class="md-nav__link">
+        Orchestrate a Replicated PingDirectory Deployment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8sPA-cluster/" class="md-nav__link">
+        Orchestrate a PingAccess Cluster Deployment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8sPF-cluster/" class="md-nav__link">
+        Orchestrate a PingFederate Cluster Deployment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3_5_7" type="checkbox" id="__nav_3_3_5_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3_5_7">
+          Deploy PingFederate Across Multiple Kubernetes Clusters
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deploy PingFederate Across Multiple Kubernetes Clusters" data-md-level="4">
+        <label class="md-nav__title" for="__nav_3_3_5_7">
+          <span class="md-nav__icon md-icon"></span>
+          Deploy PingFederate Across Multiple Kubernetes Clusters
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8sPFclusters/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pfMultiRegionAWSPrereq/" class="md-nav__link">
+        AWS Multi-Region Prereq
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployPFMultiRegionDNS/" class="md-nav__link">
+        PingFederate Across Kubernetes with DNS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployPFMultiRegionAWS/" class="md-nav__link">
+        PingFederate Across Kubernetes with S3
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3_6" type="checkbox" id="__nav_3_3_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3_6">
+          Kubernetes Deployments For Cloud Platforms
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Kubernetes Deployments For Cloud Platforms" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_3_6">
+          <span class="md-nav__icon md-icon"></span>
+          Kubernetes Deployments For Cloud Platforms
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8sCloud/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8s-AWS/" class="md-nav__link">
+        Deploy Peered EKS Clusters
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployK8s-AKS/" class="md-nav__link">
+        Deploy to Azure Kubernetes Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../k8sClusterSizing/" class="md-nav__link">
+        Sizing Kubernetes Clusters
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Deploy Hashicorp Vault
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Deploy Hashicorp Vault
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#before-you-begin" class="md-nav__link">
+    Before you begin
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-task" class="md-nav__link">
+    About this task
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-architecture" class="md-nav__link">
+    Deployment architecture
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enabling-tls" class="md-nav__link">
+    Enabling TLS
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-backend" class="md-nav__link">
+    Storage Backend
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#auto-unseal" class="md-nav__link">
+    Auto Unseal
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deploying-vault-using-helm" class="md-nav__link">
+    Deploying Vault using Helm
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pod-authentication" class="md-nav__link">
+    Pod Authentication
+  </a>
+  
+    <nav class="md-nav" aria-label="Pod Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-vault-policies" class="md-nav__link">
+    Adding Vault policies
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Vault policies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-the-policies-using-the-cli" class="md-nav__link">
+    Adding the policies using the CLI
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-api" class="md-nav__link">
+    Using the API
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-vault-ui" class="md-nav__link">
+    Using the Vault UI
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-kubernetes-auth" class="md-nav__link">
+    Configuring Kubernetes Auth
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transit-secret-engine" class="md-nav__link">
+    Transit Secret Engine
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cubbyhole-secret-engine" class="md-nav__link">
+    CubbyHole Secret Engine
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Operating Patterns
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Operating Patterns" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Operating Patterns
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploymentPatterns/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../managePingFederate/" class="md-nav__link">
+        PingFederate
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          How To
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="How To" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          How To
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/existingLicense/" class="md-nav__link">
+        Use Existing Licenses
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          Server Profile
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Server Profile" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Server Profile
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/containerAnatomy/" class="md-nav__link">
+        Deployment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/profiles/" class="md-nav__link">
+        Customization
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/saveConfigs/" class="md-nav__link">
+        Saving Configurations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2_4" type="checkbox" id="__nav_4_2_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2_4">
+          Build Your Own
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Build Your Own" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Build Your Own
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/buildPingFederateProfile/" class="md-nav__link">
+        PingFederate Profile
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/buildPingDirectoryProfile/" class="md-nav__link">
+        PingDirectory Profile
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/profilesLayered/" class="md-nav__link">
+        Layering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/profilesSubstitution/" class="md-nav__link">
+        ENV Substitution
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/privateRepos/" class="md-nav__link">
+        Private Github Repos
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/usingVault/" class="md-nav__link">
+        Vault/Secrets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/secureContainers/" class="md-nav__link">
+        Securing the Containers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_5" type="checkbox" id="__nav_4_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_5">
+          Upgrading Deployments
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Upgrading Deployments" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Upgrading Deployments
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/manage/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/upgradePingfederate/" class="md-nav__link">
+        Upgrading PingFederate
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/upgradePingDirectory/" class="md-nav__link">
+        Upgrading PingDirectory
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/migratingRootToUnprivileged/" class="md-nav__link">
+        Migrating to Unprivileged Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/profileStructures/" class="md-nav__link">
+        Server Profile
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/yamlFiles/" class="md-nav__link">
+        Docker Compose YAML
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/variableScoping/" class="md-nav__link">
+        Variables and Scope
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/usingCertificates/" class="md-nav__link">
+        Certificates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_6" type="checkbox" id="__nav_5_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_6">
+          Image Info
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Image Info" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_6">
+          <span class="md-nav__icon md-icon"></span>
+          Image Info
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/releaseTags/" class="md-nav__link">
+        Release Tags
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/productVersionMatrix/" class="md-nav__link">
+        Product & Image Release Matrix
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/imageSupport/" class="md-nav__link">
+        Docker Image Support Policy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/dockerImageSecurity/" class="md-nav__link">
+        DevOps Image Security
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_7" type="checkbox" id="__nav_5_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_7">
+          Utilities
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Utilities" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_7">
+          <span class="md-nav__icon md-icon"></span>
+          Utilities
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/ldapsdkUtil/" class="md-nav__link">
+        ldap-sdk-tools
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/troubleshooting/" class="md-nav__link">
+        Troubleshooting
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/faqs/" class="md-nav__link">
+        FAQs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_10" type="checkbox" id="__nav_5_10" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_10">
+          DevOps Images Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="DevOps Images Reference" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_10">
+          <span class="md-nav__icon md-icon"></span>
+          DevOps Images Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/dockerImagesRef/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingaccess/" class="md-nav__link">
+        PingAccess
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingauthorize/" class="md-nav__link">
+        PingAuthorize
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingauthorizepap/" class="md-nav__link">
+        PingAuthorize PAP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingbase/" class="md-nav__link">
+        PingBase
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingcentral/" class="md-nav__link">
+        PingCentral
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingcommon/" class="md-nav__link">
+        PingCommon
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingdatacommon/" class="md-nav__link">
+        PingDataCommon
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingdataconsole/" class="md-nav__link">
+        PingDataConsole
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingdatagovernance/" class="md-nav__link">
+        PingDataGovernance
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingdatagovernancepap/" class="md-nav__link">
+        PingDataGovernance PAP
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingdatasync/" class="md-nav__link">
+        PingDataSync
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingdelegator/" class="md-nav__link">
+        PingDelegator
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingdirectory/" class="md-nav__link">
+        PingDirectory
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingdirectoryproxy/" class="md-nav__link">
+        PingDirectoryProxy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingdownloader/" class="md-nav__link">
+        PingDownloader
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingfederate/" class="md-nav__link">
+        PingFederate
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingintelligence/" class="md-nav__link">
+        PingIntelligence
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/pingtoolkit/" class="md-nav__link">
+        PingToolkit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/apache-jmeter/" class="md-nav__link">
+        Apache JMeter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker-images/ldap-sdk-tools/" class="md-nav__link">
+        ldap-sdk-tools
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_11" type="checkbox" id="__nav_5_11" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_11">
+          Advanced Topics
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Advanced Topics" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_11">
+          <span class="md-nav__icon md-icon"></span>
+          Advanced Topics
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/hooks/" class="md-nav__link">
+        DevOps Hooks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/addMOTD/" class="md-nav__link">
+        Adding a MOTD
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/buildLocal/" class="md-nav__link">
+        Build Local Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          Release Notes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Release Notes" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Release Notes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2110/" class="md-nav__link">
+        Current
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2109/" class="md-nav__link">
+        Version 2109
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2108/" class="md-nav__link">
+        Version 2108
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2107/" class="md-nav__link">
+        Version 2107
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2106/" class="md-nav__link">
+        Version 2106
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2105/" class="md-nav__link">
+        Version 2105
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2104/" class="md-nav__link">
+        Version 2104
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2103/" class="md-nav__link">
+        Version 2103
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2102/" class="md-nav__link">
+        Version 2102
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2101/" class="md-nav__link">
+        Version 2101
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2012/" class="md-nav__link">
+        Version 2012
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2011/" class="md-nav__link">
+        Version 2011
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2010/" class="md-nav__link">
+        Version 2010
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2009/" class="md-nav__link">
+        Version 2009
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2008/" class="md-nav__link">
+        Version 2008
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2007/" class="md-nav__link">
+        Version 2007
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2006/" class="md-nav__link">
+        Version 2006
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2005/" class="md-nav__link">
+        Version 2005
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2004/" class="md-nav__link">
+        Version 2004
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/relnotes-2003/" class="md-nav__link">
+        Version 2003
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#before-you-begin" class="md-nav__link">
+    Before you begin
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#about-this-task" class="md-nav__link">
+    About this task
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-architecture" class="md-nav__link">
+    Deployment architecture
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enabling-tls" class="md-nav__link">
+    Enabling TLS
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#storage-backend" class="md-nav__link">
+    Storage Backend
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#auto-unseal" class="md-nav__link">
+    Auto Unseal
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deploying-vault-using-helm" class="md-nav__link">
+    Deploying Vault using Helm
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pod-authentication" class="md-nav__link">
+    Pod Authentication
+  </a>
+  
+    <nav class="md-nav" aria-label="Pod Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-vault-policies" class="md-nav__link">
+    Adding Vault policies
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Vault policies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-the-policies-using-the-cli" class="md-nav__link">
+    Adding the policies using the CLI
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-api" class="md-nav__link">
+    Using the API
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-vault-ui" class="md-nav__link">
+    Using the Vault UI
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-kubernetes-auth" class="md-nav__link">
+    Configuring Kubernetes Auth
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transit-secret-engine" class="md-nav__link">
+    Transit Secret Engine
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cubbyhole-secret-engine" class="md-nav__link">
+    CubbyHole Secret Engine
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="deploying-hashicorp-vault">Deploying Hashicorp Vault<a class="headerlink" href="#deploying-hashicorp-vault" title="Permanent link"> ¶</a></h1>
+<p>This is an example of deploying Hashicorp Vault (Vault) with PingFederate and PingAccess to manage their corresponding master keys (<code>pf.pwk</code> and <code>pa.pwk</code>). Using Vault, you can also manage license files, DevOps keys, product secrets, and others.</p>
+<h2 id="before-you-begin">Before you begin<a class="headerlink" href="#before-you-begin" title="Permanent link"> ¶</a></h2>
+<p>You must:</p>
+<ul>
+<li>Complete <a href="../../get-started/getStarted/">Get started</a> to set up your DevOps environment and run a test deployment of the products.</li>
+<li>Have access to <a href="https://www.vaultproject.io/">Vault</a>.</li>
+<li>Have access to <a href="https://helm.sh/docs/intro/install/">Helm</a>. Vault uses Helm 3.</li>
+<li>Have Kubernetes 1.7.</li>
+<li>Have OpenSSL or your favorite PKI tool.</li>
+<li>Pull our <a href="https://github.com/pingidentity/pingidentity-devops-getting-started">pingidentity-getting-started repo</a> to ensure you have the latest sources.</li>
+</ul>
+<h2 id="about-this-task">About this task<a class="headerlink" href="#about-this-task" title="Permanent link"> ¶</a></h2>
+<p>You'll clone the Vault Helm chart to deploy a near-production environment to validate and manage the product master keys, product secrets, and authentication policies.</p>
+<h2 id="deployment-architecture">Deployment architecture<a class="headerlink" href="#deployment-architecture" title="Permanent link"> ¶</a></h2>
+<p>The following image illustrates the specific configuration items we are using for this deployment. Additionally, you'll deploy Vault into Amazon Elastic Kubernetes Service (EKS) and using some of Amazon Web Service (AWS)'s specific services (<a href="https://aws.amazon.com/kms/">AWS KMS</a> and <a href="https://aws.amazon.com/dynamodb/">AWS DynamoDB</a>) to help simplify the deployment architecture.</p>
+<p><img alt="PingIdentity Vault in K8s" src="../../images/ping-vault-k8s.png" /></p>
+<h2 id="enabling-tls">Enabling TLS<a class="headerlink" href="#enabling-tls" title="Permanent link"> ¶</a></h2>
+<p>Before you deploy Vault using Helm, you must add the TLS key pair (public and private keys) and certficate authority (CA) chain files as a Kubernetes secret. The public certificate and private key need to be separate files. You can either use OpenSSL to quickly create a self-signed certificate, or use one signed by your CA.</p>
+<blockquote>
+<p>If you're using a self-signed certificate, the public certificate is also the CA certificate.</p>
+</blockquote>
+<ol>
+<li>
+<p>Create the Kubernetes secret using Vault, the TLS key pair, and the certificate:</p>
+<div class="highlight"><pre><span></span><code>kubectl create secret generic vault-certstore <span class="se">\</span>
+  --from-file<span class="o">=</span>vault.key<span class="o">=</span>&lt;local_path_to_tls_key&gt;/tls.key <span class="se">\</span>
+  --from-file<span class="o">=</span>vault.crt<span class="o">=</span>&lt;local_path_to_tls_cert&gt;/tls.crt <span class="se">\</span>
+  --from-file<span class="o">=</span>vault.ca<span class="o">=</span>&lt;local_path_to_ca_cert&gt;/vault.ca
+</code></pre></div>
+</li>
+<li>
+<p>Ensure that these parameters in the <code>values.yaml</code> file located in your local <code>pingidentity-devops-getting-started/20-kubernetes/08-vault/vault-helm</code> directory are set as follows:</p>
+<ul>
+<li>
+<p><code>global:</code></p>
+<p>Enable TLS globally:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">global</span><span class="p">:</span>
+  <span class="nt">tlsDisable</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div>
+</li>
+<li>
+<p><code>extraEnvironmentVars:</code></p>
+<p>Set the environment variable that will contain the path to the CA certificate used for TLS.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">extraEnvironmentVars</span><span class="p">:</span>
+  <span class="nt">VAULT_CACERT</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/vault/userconfig/vault-certstore/vault.ca</span>
+</code></pre></div>
+</li>
+<li>
+<p><code>extraVolumes:</code></p>
+<p>Set the volume mount for the certificate store secret. This mount will contain the TLS public certificate, private key, and CA certificate.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">extraVolumes</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">secret</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">vault-certstore</span>
+</code></pre></div>
+</li>
+<li>
+<p><code>ha:</code></p>
+<p>Set Vault to use high-availability (HA) mode. Vault uses Hashicorp Consul for its storage backend. The default configuration provided will work with the Consul (Helm) project by default. You can also manually configure Vault to use a different HA backend.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">ha</span><span class="p">:</span>
+  <span class="nt">enabled</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="nt">replicas</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
+
+<span class="c1"># Add the following parameters to the `listener &quot;tcp&quot;` element to enable TLS:</span>
+
+  <span class="nt">config</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+    <span class="no">ui = true</span>
+    <span class="no">log_level = &quot;Debug&quot;</span>
+
+    <span class="no">listener &quot;tcp&quot; {</span>
+      <span class="no">tls_disable = 0</span>
+      <span class="no">address = &quot;[::]:8200&quot;</span>
+      <span class="no">cluster_address = &quot;[::]:8201&quot;</span>
+      <span class="no">tls_cert_file = &quot;/vault/userconfig/vault-certstore/vault.crt&quot;</span>
+      <span class="no">tls_key_file  = &quot;/vault/userconfig/vault-certstore/vault.key&quot;</span>
+      <span class="no">tls_client_ca_file = &quot;/vault/userconfig/vault-certstore/vault.ca&quot;</span>
+    <span class="no">}</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="storage-backend">Storage Backend<a class="headerlink" href="#storage-backend" title="Permanent link"> ¶</a></h2>
+<p>You can take advantage of some AWS services to simplify your deployment architecture. The Vault Helm chart has examples for using files or an existing Consul deployment. Here, we'll update Vault's HA deployment to use AWS DynamoDB.</p>
+<ol>
+<li>
+<p>Create an AWS access key and secret with permissions to manage the dynamodb.</p>
+<p>You'll find the permissions that the Vault IAM user requires to manage dynamodb in the Vault documentation <a href="https://www.vaultproject.io/docs/configuration/storage/dynamodb/#required-aws-permissions">Required AWS Permissions</a>.</p>
+<blockquote>
+<p>Vault will create the necessary table in dynamodb if it does not already exist.</p>
+</blockquote>
+<p>See the Vault documentation <a href="https://www.vaultproject.io/docs/configuration/storage/dynamodb/">DynamoDB Storage Backend</a> for additional parameters when using dynamodb as a storage mechanism.</p>
+</li>
+<li>
+<p>Add your AWS access and secret key as a Kubernetes secret:</p>
+<div class="highlight"><pre><span></span><code>kubectl create secret generic dynamodb-access-secret-keys <span class="se">\</span>
+  --from-literal<span class="o">=</span><span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span>&lt;your_aws_access_key&gt; <span class="se">\</span>
+  --from-literal<span class="o">=</span><span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span>&lt;your_aws_access_key_secret&gt;
+</code></pre></div>
+</li>
+<li>
+<p>Update the <code>values.yaml</code> file to include your AWS key and secret within the <code>extraSecretEnvironmentVars</code> section.</p>
+<p>Kubernetes can provide the secrets as environment variables that Vault can use, so you don't accidentally expose the secret outside of Kubernetes.</p>
+<div class="highlight"><pre><span></span><code>  <span class="nt">extraSecretEnvironmentVars</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">envName</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">AWS_SECRET_ACCESS_KEY</span>
+    <span class="nt">secretName</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dynamodb-access-secret-key</span>
+    <span class="nt">secretKey</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">AWS_SECRET_ACCESS_KEY</span>
+  <span class="p p-Indicator">-</span> <span class="nt">envName</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">AWS_ACCESS_KEY_ID</span>
+    <span class="nt">secretName</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dynamodb-access-secret-key</span>
+    <span class="nt">secretKey</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">AWS_ACCESS_KEY_ID</span>
+</code></pre></div>
+</li>
+<li>
+<p>In the <code>ha</code> section, update the <code>dynamodb</code> storage element with your corresponding AWS region and dynamodb table name:</p>
+<div class="highlight"><pre><span></span><code>      <span class="l l-Scalar l-Scalar-Plain">storage &quot;dynamodb&quot; {</span>
+        <span class="l l-Scalar l-Scalar-Plain">ha_enabled = &quot;true&quot;</span>
+        <span class="l l-Scalar l-Scalar-Plain">region = &quot;&lt;aws_region&gt;&quot;</span>
+        <span class="l l-Scalar l-Scalar-Plain">table = &quot;&lt;dynamodb_table_name&gt;&quot;</span>
+      <span class="l l-Scalar l-Scalar-Plain">}</span>
+</code></pre></div>
+</li>
+</ol>
+<h2 id="auto-unseal">Auto Unseal<a class="headerlink" href="#auto-unseal" title="Permanent link"> ¶</a></h2>
+<p>To keep things simple, use Vault's Auto Unseal with the AWS Key Management Service (KMS).</p>
+<p>You must set up your existing AWS access key and secret with the correct permissions. Because we're using dynamodb for backend storage, you'll also add the permissions to your AWS access key.</p>
+<p>For more information, see the Vault documentation <a href="https://www.vaultproject.io/docs/configuration/seal/awskms/#authentication">AWS KMS authentication</a>n.</p>
+<p>Vault can retrieve the AWS KMS key using an environment variable so that it's not accidentally exposed outside of the Kubernetes environment.</p>
+<ol>
+<li>
+<p>Add the KMS key as a Kubernetes secret:</p>
+<div class="highlight"><pre><span></span><code>kubectl create secret generic aws-kms-key-id <span class="se">\</span>
+  --from-literal<span class="o">=</span><span class="nv">KMS_KEY_ID</span><span class="o">=</span>&lt;your_key_id&gt;
+</code></pre></div>
+</li>
+<li>
+<p>Update the <code>values.yaml</code> file to include your AWS key and secret in the <code>extraSecretEnvironmentVars</code> section:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">extraSecretEnvironmentVars</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">envName</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">VAULT_AWSKMS_SEAL_KEY_ID</span>
+  <span class="nt">secretName</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">aws-kms-key-id</span>
+  <span class="nt">secretKey</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">KMS_KEY_ID</span>
+</code></pre></div>
+</li>
+<li>
+<p>In the <code>ha</code> section config map (<code>config</code>), add a <code>seal</code> element, and update the region parameter with your AWS region value:</p>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">seal &quot;awskms&quot; {</span>
+      <span class="l l-Scalar l-Scalar-Plain">region = &quot;&lt;aws_region&gt;&quot;</span>
+<span class="l l-Scalar l-Scalar-Plain">}</span>
+</code></pre></div>
+</li>
+</ol>
+<h2 id="deploying-vault-using-helm">Deploying Vault using Helm<a class="headerlink" href="#deploying-vault-using-helm" title="Permanent link"> ¶</a></h2>
+<p>For complete information, see the Vault documentation for <a href="https://www.vaultproject.io/docs/platform/k8s">Kubernetes</a>.</p>
+<ol>
+<li>
+<p>Go to your local <code>pingidentity-devops-getting-started/20-kubernetes/08-vault/vault-helm</code> directory and enter:</p>
+<div class="highlight"><pre><span></span><code> helm install vault /.
+</code></pre></div>
+<p>Information similar to the following is displayed:</p>
+<div class="highlight"><pre><span></span><code>NAME: vault
+LAST DEPLOYED: Thu Mar 12 17:27:19 2020
+NAMESPACE: ping-cloud-devops-eks
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+  Thank you for installing HashiCorp Vault!
+  Your release is named vault. To learn more about the release, try:
+
+$ helm status vault
+$ helm get vault
+</code></pre></div>
+</li>
+<li>
+<p>If this is the first time you've deployed Vault in this environment, you must initialize it. Enter:</p>
+<div class="highlight"><pre><span></span><code>kubectl <span class="nb">exec</span> vault-0 -- vault operator init
+</code></pre></div>
+<p>If the initialization is successful, you receive the recovery keys and Initial Root token. Make sure you store the recovery keys and root token in a secure location. Information similar to the following is displayed:</p>
+<div class="highlight"><pre><span></span><code>Recovery Key 1: &lt;key_1&gt;
+Recovery Key 2: &lt;key_2&gt;
+Recovery Key 3: &lt;key_3&gt;
+Recovery Key 4: &lt;key_4&gt;
+Recovery Key 5: &lt;key_5&gt;
+
+Initial Root Token: &lt;root_token&gt;
+
+Success! Vault is initialized
+
+Recovery key initialized with 5 key shares and a key threshold of 3. Please
+securely distribute the key shares printed above.
+</code></pre></div>
+</li>
+</ol>
+<h2 id="pod-authentication">Pod Authentication<a class="headerlink" href="#pod-authentication" title="Permanent link"> ¶</a></h2>
+<p>Our products and applications must have a Vault client token to authenticate to Vault. Because we're using Kubernetes, we can use Vault's Kubernetes auth method.</p>
+<p>When the Kubernetes auth method is enabled, Vault can use a pod's Kubernetes service account token to authenticate and exchange for a Vault client token. The Vault client token is associated with a particular role with permissions to perform certain Vault operations.</p>
+<ol>
+<li>
+<p>Attach to the namespace where the Vault will be deployed:</p>
+<div class="highlight"><pre><span></span><code>kubens ping-cloud-devops-eks-vault
+</code></pre></div>
+<p>Vault's cluster role binding creates a service account <code>vault</code> to perform delegated authentication and authorization checks. This service account is used by the Kubernetes authentication mechanism to allow authentication by other applications.</p>
+</li>
+<li>
+<p>Retrieve the service account secret name and set the environment variable <code>SA_SECRET_NAME</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">SA_SECRET_NAME</span><span class="o">=</span><span class="k">$(</span>kubectl get serviceaccounts vault -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.secrets[].name}&quot;</span><span class="k">)</span>
+</code></pre></div>
+</li>
+<li>
+<p>Save the service account CA certificate, Kubernetes cluster API hostname, and the service account token to environment variables.</p>
+<p>These variable values will be used in the Kerberos auth method configuration.</p>
+<ol>
+<li>
+<p>Save the service account CA certificate:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">SA_CA_CRT</span><span class="o">=</span><span class="k">$(</span>kubectl get secret <span class="nv">$SA_SECRET_NAME</span> -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.data[&#39;ca\.crt&#39;]}&quot;</span> <span class="p">|</span> base64 --decode<span class="p">;</span> <span class="nb">echo</span><span class="k">)</span>
+</code></pre></div>
+</li>
+<li>
+<p>Save the Kubernetes cluster API hostname:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">K8S_API_HOST</span><span class="o">=</span><span class="k">$(</span>kubectl config view --minify -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.clusters[0].cluster.server}&#39;</span><span class="k">)</span>
+</code></pre></div>
+</li>
+<li>
+<p>Save the service account token:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">SA_TOKEN</span><span class="o">=</span><span class="k">$(</span>kubectl get secret <span class="nv">$SA_SECRET_NAME</span> -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.data[&#39;token&#39;]}&quot;</span> <span class="p">|</span> base64 --decode<span class="p">;</span> <span class="nb">echo</span><span class="k">)</span>
+</code></pre></div>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="adding-vault-policies">Adding Vault policies<a class="headerlink" href="#adding-vault-policies" title="Permanent link"> ¶</a></h3>
+<ol>
+<li>
+<p>Choose the method to use to add the policies to your Vault:</p>
+<ul>
+<li>CLI</li>
+<li>API</li>
+<li>UI</li>
+</ul>
+</li>
+<li>
+<p>Add to Vault the policy files <code>pingfederate.hcl</code> and <code>pingaccess.hcl</code> to ensure the products have access only to their own secrets and keys.</p>
+</li>
+<li>
+<p>Update the <code>&lt;namespace&gt;</code> and <code>&lt;env&gt;</code> tags in your policy files with the appropriate values.</p>
+<p>The recommended value for <code>&lt;namespace&gt;</code> is your Kubernetes namespace. The typical values for <code>&lt;env&gt;</code> are dev, staging, and prod. For example:</p>
+<div class="highlight"><pre><span></span><code>&lt;namespace&gt; : ping-cloud-eks-bob
+&lt;env&gt; : dev
+</code></pre></div>
+</li>
+</ol>
+<h4 id="adding-the-policies-using-the-cli">Adding the policies using the CLI<a class="headerlink" href="#adding-the-policies-using-the-cli" title="Permanent link"> ¶</a></h4>
+<p>Connect to a Vault pod and enter the following at the command line:</p>
+<div class="admonition note">
+<p class="admonition-title">Repeat for PingAccess</p>
+<p>Showing PingFederate entries here. You'll need to do the same for PingAccess.</p>
+</div>
+<div class="highlight"><pre><span></span><code>vault policy write &lt;namespace&gt;-&lt;env&gt;-pingfederate -&lt;&lt;
+<span class="c1"># Enable transit secrets engine</span>
+path <span class="s2">&quot;sys/mounts/transit&quot;</span> <span class="o">{</span>
+  <span class="nv">capabilities</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&quot;read&quot;</span>, <span class="s2">&quot;update&quot;</span>, <span class="s2">&quot;list&quot;</span> <span class="o">]</span>
+<span class="o">}</span>
+
+<span class="c1"># To read enabled secrets engines</span>
+path <span class="s2">&quot;sys/mounts&quot;</span> <span class="o">{</span>
+  <span class="nv">capabilities</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&quot;create&quot;</span>, <span class="s2">&quot;read&quot;</span>, <span class="s2">&quot;update&quot;</span>, <span class="s2">&quot;delete&quot;</span> <span class="o">]</span>
+<span class="o">}</span>
+
+<span class="c1"># Manage the keys transit keys endpoint</span>
+path <span class="s2">&quot;transit/keys/&lt;namespace&gt;-&lt;environment&gt;-pingfederate&quot;</span> <span class="o">{</span>
+  <span class="nv">capabilities</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&quot;create&quot;</span>, <span class="s2">&quot;read&quot;</span>, <span class="s2">&quot;update&quot;</span>, <span class="s2">&quot;list&quot;</span> <span class="o">]</span>
+<span class="o">}</span>
+
+<span class="c1"># Manage the keys transit keys endpoint</span>
+path <span class="s2">&quot;transit/encrypt/&lt;namespace&gt;-&lt;environment&gt;-pingfederate&quot;</span> <span class="o">{</span>
+  <span class="nv">capabilities</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&quot;create&quot;</span>, <span class="s2">&quot;read&quot;</span>, <span class="s2">&quot;update&quot;</span>, <span class="s2">&quot;list&quot;</span> <span class="o">]</span>
+<span class="o">}</span>
+
+<span class="c1"># Manage the keys transit keys endpoint</span>
+path <span class="s2">&quot;transit/decrypt/&lt;namespace&gt;-&lt;environment&gt;-pingfederate&quot;</span> <span class="o">{</span>
+  <span class="nv">capabilities</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&quot;create&quot;</span>, <span class="s2">&quot;read&quot;</span>, <span class="s2">&quot;update&quot;</span>, <span class="s2">&quot;list&quot;</span> <span class="o">]</span>
+<span class="o">}</span>
+
+<span class="c1">#Manage the cubbyhole secrets engine</span>
+path <span class="s2">&quot;cubbyhole/&lt;namespace&gt;/&lt;env&gt;/pingfederate/masterkey&quot;</span> <span class="o">{</span>
+  <span class="nv">capabilities</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&quot;create&quot;</span>, <span class="s2">&quot;read&quot;</span>, <span class="s2">&quot;update&quot;</span>, <span class="s2">&quot;list&quot;</span> <span class="o">]</span>
+<span class="o">}</span>
+EOF
+</code></pre></div>
+<h4 id="using-the-api">Using the API<a class="headerlink" href="#using-the-api" title="Permanent link"> ¶</a></h4>
+<p>Make sure your client can access the Vault API endpoint. For example:</p>
+<div class="highlight"><pre><span></span><code>curl <span class="se">\</span>
+    --header <span class="s2">&quot;X-Vault-Token: ...&quot;</span> <span class="se">\</span>
+    --request PUT <span class="se">\</span>
+    --data @pingfederate-policy.hcl <span class="se">\</span>
+    http://127.0.0.1:8200/v1/sys/policy/&lt;namespace&gt;-&lt;env&gt;-pingfederate
+</code></pre></div>
+<h4 id="using-the-vault-ui">Using the Vault UI<a class="headerlink" href="#using-the-vault-ui" title="Permanent link"> ¶</a></h4>
+<p>To Port-forward the Vault port for the UI, go to `https://localhost:<vault-ui-port>, and add the entries (as shown for the CLI method):</p>
+<div class="admonition note">
+<p class="admonition-title">Repeat for PingAccess</p>
+<p>Showing PingFederate entries here. You'll need to do the same for PingAccess.</p>
+</div>
+<p><img alt="Vault UI" src="../../images/vault-ui.png" /></p>
+<h3 id="configuring-kubernetes-auth">Configuring Kubernetes Auth<a class="headerlink" href="#configuring-kubernetes-auth" title="Permanent link"> ¶</a></h3>
+<p>Enable Kubernetes auth.</p>
+<div class="admonition note">
+<p class="admonition-title">Vault deployment</p>
+<p>Vault doesn't need to be deployed in a Kubernetes environment to support Kubernetes auth. You can also support multiple Kubernetes clusters.</p>
+</div>
+<p>The following commands can be performed by the Vault admin or a configuration management tool.</p>
+<ul>
+<li>
+<p>Enable Kubernetes auth:</p>
+<div class="highlight"><pre><span></span><code>kubectl <span class="nb">exec</span> vault-0 -- vault auth <span class="nb">enable</span> kubernetes
+</code></pre></div>
+</li>
+<li>
+<p>Configure Kubernetes auth:</p>
+<div class="highlight"><pre><span></span><code>kubectl <span class="nb">exec</span> vault-0 -- vault write auth/kubernetes/config <span class="se">\</span>
+<span class="nv">token_reviewer_jwt</span><span class="o">=</span><span class="nv">$SA_TOKEN</span> <span class="se">\</span>
+<span class="nv">kubernetes_host</span><span class="o">=</span><span class="nv">$K8S_API_HOST</span> <span class="se">\</span>
+<span class="nv">kubernetes_ca_cert</span><span class="o">=</span><span class="nv">$SA_CA_CRT</span>
+</code></pre></div>
+</li>
+<li>
+<p>Register a role for each product:</p>
+<ol>
+<li>
+<p>To give you more control over product permissions, we'll use this naming convention for roles: <code>&lt;k8s-namespace&gt;-&lt;environment&gt;-&lt;product_name&gt;</code>. For example</p>
+<div class="highlight"><pre><span></span><code>k8s-namespace = ping-cloud-devops-eks-apps
+environment = dev
+product_name = pingfederate
+
+ping-cloud-devops-eks-apps-dev-pingfederate
+</code></pre></div>
+</li>
+<li>
+<p>To register the roles, update the following command with your role name, the product namespace, and policy name before executing:</p>
+<div class="highlight"><pre><span></span><code>kubectl <span class="nb">exec</span> vault-0 -- vault write auth/kubernetes/role/&lt;namespace&gt;-&lt;environment&gt;-&lt;product_name&gt; <span class="se">\</span>
+  <span class="nv">bound_service_account_names</span><span class="o">=</span>vault-auth <span class="se">\</span>
+  <span class="nv">bound_service_account_namespaces</span><span class="o">=</span>&lt;application_namespace&gt; <span class="se">\</span>
+  <span class="nv">policies</span><span class="o">=</span>&lt;policy&gt;
+</code></pre></div>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="transit-secret-engine">Transit Secret Engine<a class="headerlink" href="#transit-secret-engine" title="Permanent link"> ¶</a></h3>
+<p>The Transit secret engine uses a Vault-managed key to support encryption and decryption of each product's master key. Each product implements a common interface (MasterKeyEncryptor) that encrypts the master key while at rest.</p>
+<h3 id="cubbyhole-secret-engine">CubbyHole Secret Engine<a class="headerlink" href="#cubbyhole-secret-engine" title="Permanent link"> ¶</a></h3>
+<p>The CubbyHole secret engine is used to store the master key for each product. This is to assist backups and restoration. In addition, this can be used to assist with migrating configurations from one environment to another (for example, from dev to staging).</p>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../k8sClusterSizing/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Sizing Kubernetes Clusters" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Sizing Kubernetes Clusters
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../deploymentPatterns/" class="md-footer__link md-footer__link--next" aria-label="Next: Introduction" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Introduction
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            © Copyright 2021 Ping Identity
+          </div>
+        
+        
+          Made with
+          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+            Material for MkDocs
+          </a>
+        
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "instant"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.b1047164.min.js"></script>
+      
+    
+  </body>
+</html>
