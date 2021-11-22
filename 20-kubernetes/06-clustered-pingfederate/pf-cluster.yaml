@@ -1,0 +1,216 @@
+apiVersion: v1
+data:
+  CLUSTER_BIND_ADDRESS: NON_LOOPBACK
+  CLUSTER_NAME: K8S_PF_CLUSTER
+  DNS_QUERY_LOCATION: _bind-port._tcp.pf-cluster.${PING_IDENTITY_K8S_NAMESPACE}.svc.cluster.local
+  DNS_RECORD_TYPE: SRV
+  OPERATIONAL_MODE: CLUSTERED_CONSOLE
+  PING_IDENTITY_ACCEPT_EULA: "YES"
+  SERVER_PROFILE_GETTING_STARTED_PATH: getting-started/pingfederate
+  SERVER_PROFILE_GETTING_STARTED_URL: https://github.com/pingidentity/pingidentity-server-profiles.git
+  SERVER_PROFILE_PARENT: GETTING_STARTED
+  SERVER_PROFILE_PATH: pf-dns-ping-clustering/pingfederate
+  SERVER_PROFILE_URL: https://github.com/pingidentity/pingidentity-server-profiles.git
+kind: ConfigMap
+metadata:
+  name: pingfederate-admin-environment-variables
+---
+apiVersion: v1
+data:
+  CLUSTER_BIND_ADDRESS: NON_LOOPBACK
+  CLUSTER_NAME: K8S_PF_CLUSTER
+  DNS_QUERY_LOCATION: _bind-port._tcp.pf-cluster.${PING_IDENTITY_K8S_NAMESPACE}.svc.cluster.local
+  DNS_RECORD_TYPE: SRV
+  OPERATIONAL_MODE: CLUSTERED_ENGINE
+  PING_IDENTITY_ACCEPT_EULA: "YES"
+  SERVER_PROFILE_GETTING_STARTED_PATH: getting-started/pingfederate
+  SERVER_PROFILE_GETTING_STARTED_URL: https://github.com/pingidentity/pingidentity-server-profiles.git
+  SERVER_PROFILE_PARENT: GETTING_STARTED
+  SERVER_PROFILE_PATH: pf-dns-ping-clustering/pingfederate
+  SERVER_PROFILE_URL: https://github.com/pingidentity/pingidentity-server-profiles.git
+kind: ConfigMap
+metadata:
+  name: pingfederate-engine-environment-variables
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  labels:
+    role: pingfederate
+  name: pf-cluster
+spec:
+  clusterIP: None
+  ports:
+  - name: bind-port
+    port: 7600
+    protocol: TCP
+    targetPort: 7600
+  - name: cluster-failover
+    port: 7700
+    protocol: TCP
+    targetPort: 7700
+  publishNotReadyAddresses: true
+  selector:
+    role: pingfederate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    role: pingfederate
+    tier: engine
+  name: pingfederate
+spec:
+  ports:
+  - name: https
+    port: 9031
+  selector:
+    role: pingfederate
+    tier: engine
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    role: pingfederate
+    tier: console
+  name: pingfederate-admin
+spec:
+  ports:
+  - name: pf-console
+    port: 9999
+  selector:
+    role: pingfederate
+    tier: console
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    role: pingfederate
+    tier: engine
+  name: pingfederate
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      role: pingfederate
+      tier: engine
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        role: pingfederate
+        tier: engine
+        version: "0.1"
+      name: pingfederate
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: pingfederate-engine-environment-variables
+        - secretRef:
+            name: devops-secret
+            optional: true
+        image: pingidentity/pingfederate:edge
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - sleep 20
+        name: pingfederate
+        ports:
+        - containerPort: 9031
+        readinessProbe:
+          httpGet:
+            path: /pf/heartbeat.ping
+            port: 9031
+            scheme: HTTPS
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1.5Gi
+          requests:
+            cpu: "1"
+            memory: 1.5Gi
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until curl --connect-timeout 1 --silent -k https://pingfederate-admin:9999/pingfederate/app
+          ; do echo waiting for admin ; sleep 2 ; done
+        image: curlimages/curl:latest
+        name: init
+        resources:
+          limits:
+            cpu: 50m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    role: pingfederate
+    tier: console
+  name: pingfederate-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: pingfederate
+      tier: console
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        role: pingfederate
+        tier: console
+      name: pingfederate-admin
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: pingfederate-admin-environment-variables
+        - secretRef:
+            name: devops-secret
+            optional: true
+        image: pingidentity/pingfederate:edge
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 1
+          httpGet:
+            path: /pingfederate/app
+            port: 9999
+            scheme: HTTPS
+          initialDelaySeconds: 100
+          periodSeconds: 1
+        name: pingfederate-admin
+        ports:
+        - containerPort: 9999
+        - containerPort: 7600
+        readinessProbe:
+          httpGet:
+            path: /pingfederate/app
+            port: 9999
+            scheme: HTTPS
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1.5Gi
+          requests:
+            cpu: "1"
+            memory: 1.5Gi
